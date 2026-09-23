@@ -1,0 +1,1 @@
+Take a look at the REQUIREMENTS.md with the implementation details. A phone is connected. Plan the implementation. Ask for feedback if needed. Prompt before implementation.

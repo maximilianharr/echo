@@ -5,16 +5,25 @@
 - Kotlin + Jetpack Compose, native Android app.
 - `minSdk` 33, `targetSdk` latest stable.
 
-## Existing Repo Conventions (must match)
+## Repo Conventions (fixed, regardless of configured repo)
 
-- Repo: `https://github.com/maximilianharr/zettels-private` (private).
 - Text files: `journals/YYYYMMDDHHMMSS.md` (14-digit timestamp, no
-  separators).
+  separators), hardcoded path.
+- Audio files: `journals/audio/YYYYMMDDHHMMSS.m4a`, hardcoded path.
 - No frontmatter.
+
+## Setup (mandatory, gated)
+
+- On first launch, before the Record screen is reachable, show a setup
+  screen requiring:
+  - GitHub repo, as `owner/repo` (e.g. `maximilianharr/zettels-private`).
+  - Fine-grained GitHub PAT (see Auth).
+- Record screen is inaccessible until both are set.
+- Values editable later from a Settings entry point.
 
 ## UX Flow
 
-Single screen, no history/list screen.
+Single screen (post-setup), no history/list screen.
 
 1. Screen opens showing a **Record** button (no auto-start on launch).
 2. Tap Record → recording starts → **Stop** button shown.
@@ -52,7 +61,7 @@ For timestamp `T` = `YYYYMMDDHHMMSS`:
 
 ## GitHub Push
 
-- GitHub REST Contents API: `PUT /repos/maximilianharr/zettels-private/contents/<path>`.
+- GitHub REST Contents API: `PUT /repos/<configured owner/repo>/contents/<path>`.
 - No git clone / JGit — app only ever adds new files, never edits existing
   ones.
 - Two separate API calls/commits per entry (`.md`, then `.m4a`) so each can
@@ -60,9 +69,9 @@ For timestamp `T` = `YYYYMMDDHHMMSS`:
 
 ## Auth
 
-- Fine-grained GitHub PAT, scoped to this repo only, "Contents:
+- Fine-grained GitHub PAT, scoped to the configured repo only, "Contents:
   read/write" permission.
-- Entered once in a Settings screen, stored in Android Keystore-backed
+- Entered at setup (see Setup), stored in Android Keystore-backed
   `EncryptedSharedPreferences`.
 
 ## Reliability

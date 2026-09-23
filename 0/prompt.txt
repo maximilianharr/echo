@@ -1,0 +1,1 @@
+use your recommendation. I am not familiar with kotlin. You will create a REQUIREMENTS.md and then implement it once I prompt so.

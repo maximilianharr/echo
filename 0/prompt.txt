@@ -1,0 +1,1 @@
+private repo. Already exists, but currently the diary is written markdown files by me on a linux with push. This is a multi-step process (power on linux, open tool, write, git push) and thus I do it infrequently. The tool shall be single-click on android. Thus I hope to do it more frequently.

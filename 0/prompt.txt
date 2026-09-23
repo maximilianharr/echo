@@ -1,0 +1,5 @@
+Great work. But it seems like recording is stopped when screen is locked. I want to start recording with my headset and then lock the phone, put it in my pocket and open the phone once I am finished. Is this possible?
+
+---
+
+yes, implement it.

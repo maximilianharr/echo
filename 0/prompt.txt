@@ -1,0 +1,7 @@
+Base directory for this skill: /home/max/.claude/skills/grill-me
+
+Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+Ask the questions one at a time.
+If a question can be answered by exploring the codebase, explore the codebase instead.
+
+ARGUMENTS: I want to create a tool that listens to what I say and writes it to a textfile in format "YYYYMMDD-HHMMSS.md" and pushes it to my github repo. It is intended to be a diary for my work and personal live. The idea is to do this in the evening and then have an llm like claude read it and remind me of my todos etc. It needs to be super-easy to use, like "one-click" android app or windows/linux. It would also be okish to just record audio and push to github. I could create a cronjob on my pc which converts to text. actually, best option would be to push audio and text both to github directly. App should be super easy, e.g. "record-button, then stop button, then discard or send button. What do you think? How could we do this?

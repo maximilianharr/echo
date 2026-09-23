@@ -1,0 +1,9 @@
+I entered wrong PAT. it notified me. was correct. Entered new one and it worked. Created repo maximilianharr/test. Recorded, stoped, send. Uploaded successfully. Also good. Transcription was okish. Worked. Downloaded german language pack the first time then had it available for all following transcriptions.
+
+---
+
+tested discard and offline. Both worked great. Enable punctuation and capitals. I will check and commit any changes.
+
+---
+
+phone connected, install it

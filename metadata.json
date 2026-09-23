@@ -1,0 +1,26 @@
+{
+  "cli_version": "0.11.2",
+  "checkpoint_id": "01M37RH30JJDB7B1YWJ5D7QJR9",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "app/src/main/java/dev/echo/Transcriber.kt"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 12,
+    "cache_creation_tokens": 56029,
+    "cache_read_tokens": 404584,
+    "output_tokens": 2173,
+    "api_call_count": 6
+  }
+}

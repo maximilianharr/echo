@@ -31,13 +31,16 @@
   PAT (must return 200; write permission is not checked). On failure, show an inline error
   immediately and keep the user on the setup screen — do not proceed until
   validation succeeds.
+- Also on this screen: transcription locale (see Transcription) and daily
+  reminder (see Reminder).
 - Record screen is inaccessible until both are set and validated.
 - Values editable later from a Settings entry point (re-validated on
-  change).
+  change). Settings additionally has a **Sync** button (see Heatmap).
 
 ## UX Flow
 
-Single screen (post-setup), no history/list screen.
+Single screen (post-setup), no history/list screen; only the heatmap (see
+Heatmap) summarizes past entries.
 
 1. Screen opens showing a **Record** button (no auto-start on launch).
 2. Tap Record → recording starts → **Stop** button shown.
@@ -103,12 +106,69 @@ For timestamp `T` = `YYYYMMDDHHMMSS` (local time when Record was tapped):
    per-file independently.
 4. On confirmed push, delete the local app-private copy of that file.
 
+## Heatmap
+
+- Shows which days of the last 53 weeks have at least one entry.
+- Days are kept locally (set of `YYYYMMDD`).
+- Rebuilt from GitHub after a successful Setup save when the repo is new or
+  changed, and by the **Sync** button in Settings. Rebuild = days of all
+  `journals/audio/*.m4a` in the repo (via
+  `GET /repos/<owner/repo>/git/trees/HEAD:journals/audio`; the Contents API
+  is capped at 1000 entries) plus entries still waiting in the local queue.
+  Missing directory or empty repo = no days.
+- After each Send, that entry's day is added locally. No other GitHub
+  fetches.
+
+## Reminder
+
+- Optional daily notification, configured in Setup/Settings: on/off switch
+  (default off) and time (default 20:00, 24h picker).
+- Switching it on requests `POST_NOTIFICATIONS`; if denied, it stays off.
+- At the chosen time, notify "Time for your diary" only if today has no
+  entry yet (per the heatmap days). Tapping opens the app.
+- Exact alarm (`AlarmManager.setExactAndAllowWhileIdle`), rescheduled for the
+  next day after each firing, on app start and after reboot.
+- Sync status is never notified; the in-app "waiting to sync" text is the
+  only sync status.
+
+## Design
+
+- Very simple and lean; no decoration beyond what is listed here.
+- Two colours only:
+  - Light (default): bright caramel background `#F3DCB0`, dark brown
+    `#3E2415` for text, icons and buttons.
+  - Dark (system dark mode): dark brown background `#23160D`, caramel
+    `#F3DCB0` for text, icons and buttons.
+  - Tints of the foreground colour on the background are used for secondary
+    elements (field outlines, empty heatmap cells, dialogs).
+- Default Material 3 typography.
+- App icon: adaptive icon, dark brown record button (ring around a filled
+  dot) on caramel. Notification icon: same glyph, monochrome.
+- Record screen, top to bottom:
+  1. Gear icon (Settings), top right.
+  2. Heatmap: one column per week, rows Monday→Sunday, 10dp rounded
+     squares with 2dp gaps. Filled cell = foreground colour, empty cell =
+     foreground at ~12% alpha; no intermediate shades, no labels. Days after
+     today are not drawn. Scrolls horizontally, initially scrolled to today.
+  3. Centre: large round button with a short label below:
+     - Idle: 96dp circle with a dot — "Record".
+     - Recording: 96dp circle with a rounded square — "Stop".
+     - Stopped: two 72dp circles, ✕ "Discard" and → "Send".
+     - Sending: spinner + "Transcribing…".
+  4. Bottom: "N entries waiting to sync" (small text, only if N > 0).
+- Recording visualizer: microphone loudness (`MediaRecorder` max amplitude
+  every 50 ms, −50…0 dBFS mapped to 0…1), smoothly animated. The Stop button
+  scales up to ~1.15× and a soft radial glow behind it grows with loudness.
+- Setup/Settings: plain form in the same colours (text fields, locale chips,
+  reminder switch + time, Save / Sync / Cancel).
+
 ## Permissions
 
 - `RECORD_AUDIO`
 - `INTERNET`
-- No notifications (and no `POST_NOTIFICATIONS`); the in-app "waiting to
-  sync" text is the only sync status.
+- `POST_NOTIFICATIONS` (requested only when the reminder is switched on)
+- `USE_EXACT_ALARM` (granted at install; fine since not on Play Store)
+- `RECEIVE_BOOT_COMPLETED` (reschedule reminder after reboot)
 
 ## Out of Scope
 

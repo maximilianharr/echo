@@ -26,6 +26,20 @@ fun validate(repo: String, pat: String): String? = try {
     "Network error: ${e.message}"
 }
 
+/** Days (`yyyyMMdd`) that have an audio file in journals/audio. Throws on failure. Blocking. */
+fun listDays(repo: String, pat: String): Set<String> {
+    val conn = open("GET", "/repos/$repo/git/trees/HEAD:journals/audio", pat)
+    when (val code = conn.responseCode) {
+        200 -> {}
+        404, 409 -> return emptySet() // no journals/audio yet, or empty repo
+        else -> throw IOException("HTTP $code")
+    }
+    val tree = JSONObject(conn.inputStream.bufferedReader().readText()).getJSONArray("tree")
+    return (0 until tree.length()).map { tree.getJSONObject(it).getString("path") }
+        .filter { Regex("\\d{14}\\.m4a").matches(it) }
+        .map { it.take(8) }.toSet()
+}
+
 /** Creates [path] in [repo]. Throws on failure. 422 = file already exists = already pushed. Blocking. */
 fun put(repo: String, pat: String, path: String, bytes: ByteArray) {
     val body = JSONObject()

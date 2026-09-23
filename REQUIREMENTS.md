@@ -6,6 +6,13 @@
 - `minSdk` 33, `targetSdk` latest stable.
 - Distribution: no Play Store. Installed via `adb install` over USB from
   Linux. No auto-update mechanism — new builds are reinstalled manually.
+- Build & install (debug-signed; reinstall keeps app data):
+  ```
+  ./gradlew assembleDebug
+  adb install -r app/build/outputs/apk/debug/app-debug.apk
+  ```
+  Requires Android SDK path in `local.properties` (`sdk.dir=...`) and a
+  JDK 17 toolchain (Gradle auto-detects one in `~/.gradle/jdks`).
 
 ## Repo Conventions (fixed, regardless of configured repo)
 
@@ -20,8 +27,8 @@
   screen requiring:
   - GitHub repo, as `owner/repo` (e.g. `maximilianharr/zettels-private`).
   - Fine-grained GitHub PAT (see Auth).
-- On submit, validate by calling the GitHub API (e.g. fetch repo/contents
-  metadata) with the given PAT. On failure, show an inline error
+- On submit, validate by calling `GET /repos/<owner/repo>` with the given
+  PAT (must return 200; write permission is not checked). On failure, show an inline error
   immediately and keep the user on the setup screen — do not proceed until
   validation succeeds.
 - Record screen is inaccessible until both are set and validated.
@@ -50,17 +57,22 @@ Single screen (post-setup), no history/list screen.
 ## Transcription
 
 - Android on-device `SpeechRecognizer` API (no cloud STT).
-- Default locale `de-DE`, changeable via a setting (dropdown/toggle). No
+- Default locale `de-DE`, switchable to `en-US` in Setup/Settings. No
   auto-detection.
 - Runs after Stop, triggered by Send.
+- The recorded `.m4a` is decoded to 16 kHz mono PCM and fed to the
+  on-device recognizer (`EXTRA_AUDIO_SOURCE`, segmented session), with
+  punctuation/capitalization formatting enabled.
+- If transcription fails or yields no text, only the audio is uploaded (no
+  `.md`). A missing language pack triggers its download for later entries.
 
 ## File Output
 
-For timestamp `T` = `YYYYMMDDHHMMSS`:
+For timestamp `T` = `YYYYMMDDHHMMSS` (local time when Record was tapped):
 
 - Transcript: `journals/T.md`
   ```
-  # YYYY MM DD
+  # YYYY MM DD        (e.g. "# 2026 09 23")
 
   <transcribed text>
   ```
@@ -72,7 +84,9 @@ For timestamp `T` = `YYYYMMDDHHMMSS`:
 - No git clone / JGit — app only ever adds new files, never edits existing
   ones.
 - Two separate API calls/commits per entry (`.md`, then `.m4a`) so each can
-  retry independently.
+  retry independently. Commit message: `Add <path>`, default branch.
+- HTTP 422 (file already exists, e.g. an earlier push succeeded but its
+  response was lost) counts as success.
 
 ## Auth
 
@@ -93,8 +107,8 @@ For timestamp `T` = `YYYYMMDDHHMMSS`:
 
 - `RECORD_AUDIO`
 - `INTERNET`
-- `POST_NOTIFICATIONS` (Android 13+, only if a retry/failure notification is
-  shown)
+- No notifications (and no `POST_NOTIFICATIONS`); the in-app "waiting to
+  sync" text is the only sync status.
 
 ## Out of Scope
 

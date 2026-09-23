@@ -56,6 +56,10 @@ Heatmap) summarizes past entries.
 - `MediaRecorder`, AAC codec, `.m4a` container.
 - Mono, ~96 kbps, 44.1 kHz.
 - No max recording length.
+- Recording continues until Stop, also while the screen is locked or the app
+  is in the background (foreground service of type `microphone`). Closing the
+  app (Back / swiping it away) while recording stops the recording.
+- Always the default mic source; no special handling of connected headsets.
 
 ## Transcription
 
@@ -159,6 +163,9 @@ For timestamp `T` = `YYYYMMDDHHMMSS` (local time when Record was tapped):
 - Recording visualizer: microphone loudness (`MediaRecorder` max amplitude
   every 50 ms, −50…0 dBFS mapped to 0…1), smoothly animated. The Stop button
   scales up to ~1.15× and a soft radial glow behind it grows with loudness.
+- While recording, an ongoing low-priority notification "Recording…" (record
+  glyph, no actions; tap opens the app) — required by Android for the
+  foreground service. Hidden if notifications are not permitted.
 - Setup/Settings: plain form in the same colours (text fields, locale chips,
   reminder switch + time, Save / Sync / Cancel).
 
@@ -169,6 +176,7 @@ For timestamp `T` = `YYYYMMDDHHMMSS` (local time when Record was tapped):
 - `POST_NOTIFICATIONS` (requested only when the reminder is switched on)
 - `USE_EXACT_ALARM` (granted at install; fine since not on Play Store)
 - `RECEIVE_BOOT_COMPLETED` (reschedule reminder after reboot)
+- `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MICROPHONE` (record while locked)
 
 ## Out of Scope
 

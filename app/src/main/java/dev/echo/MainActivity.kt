@@ -2,6 +2,7 @@ package dev.echo
 
 import android.Manifest
 import android.app.Application
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
@@ -157,6 +158,7 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
 
     fun record() {
         stamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.US).format(Date())
+        app.startForegroundService(Intent(app, RecordService::class.java))
         recorder = MediaRecorder(app).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -191,6 +193,11 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
         }
         recorder!!.release()
         recorder = null
+        app.stopService(Intent(app, RecordService::class.java))
+    }
+
+    override fun onCleared() {
+        if (recorder != null) stop() // app closed while recording
     }
 
     fun discard() {

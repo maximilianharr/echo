@@ -4,6 +4,8 @@
 
 - Kotlin + Jetpack Compose, native Android app.
 - `minSdk` 33, `targetSdk` latest stable.
+- Distribution: no Play Store. Installed via `adb install` over USB from
+  Linux. No auto-update mechanism — new builds are reinstalled manually.
 
 ## Repo Conventions (fixed, regardless of configured repo)
 
@@ -18,8 +20,13 @@
   screen requiring:
   - GitHub repo, as `owner/repo` (e.g. `maximilianharr/zettels-private`).
   - Fine-grained GitHub PAT (see Auth).
-- Record screen is inaccessible until both are set.
-- Values editable later from a Settings entry point.
+- On submit, validate by calling the GitHub API (e.g. fetch repo/contents
+  metadata) with the given PAT. On failure, show an inline error
+  immediately and keep the user on the setup screen — do not proceed until
+  validation succeeds.
+- Record screen is inaccessible until both are set and validated.
+- Values editable later from a Settings entry point (re-validated on
+  change).
 
 ## UX Flow
 

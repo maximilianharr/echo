@@ -1,0 +1,5 @@
+Great. Anything else we need to do/discuss?
+
+---
+
+if user enters invalid PAT+repo at setup prompt immediatly to corret it. The app will be installed via a linux to a phone connected via USB cable for now.

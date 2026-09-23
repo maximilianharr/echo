@@ -1,0 +1,5 @@
+ok great. Now a colleague might want to use it as well. I assume the PAT is queried at the initial setup of the app? Then also query the repo name at the initial setup (e.g. maximilianharr/zettels-private). Agreed? If you agree, then update REQUIREMENTS.md otherwise challenge me and prompt for more input if required.
+
+---
+
+Agreed, hardcoded paths and mandatory gated setup

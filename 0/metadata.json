@@ -1,0 +1,82 @@
+{
+  "cli_version": "0.11.2",
+  "checkpoint_id": "01M37FHVTQZV5T9REQ4E0VG0D1",
+  "session_id": "68c4c7a3-2ec0-4d9e-84cf-eefc8ea49d18",
+  "strategy": "manual-commit",
+  "created_at": "2026-09-23T15:53:41.745916411Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "REQUIREMENTS.md"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-sonnet-5",
+  "turn_id": "b5ae6f414286",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 58,
+    "cache_creation_tokens": 25296,
+    "cache_read_tokens": 1561952,
+    "output_tokens": 23319,
+    "api_call_count": 29
+  },
+  "skill_events_version": 1,
+  "skill_events": [
+    {
+      "id": "claude-skill-toolu_01P5wMpf9EkRRuGFieZgEp6e",
+      "event_type": "tool_invocation",
+      "skill": {
+        "name": "grill-me"
+      },
+      "source": {
+        "agent": "claude-code",
+        "signal": "skill_tool_use",
+        "confidence": "explicit"
+      },
+      "turn_id": "b5ae6f414286",
+      "transcript_anchor": {
+        "unit": "line",
+        "start": 46,
+        "end": 47,
+        "entry_ids": [
+          "78e98ae7-4900-4490-999e-bb5078a7c3ce"
+        ],
+        "tool_use_id": "toolu_01P5wMpf9EkRRuGFieZgEp6e"
+      },
+      "native": {
+        "tool_name": "Skill",
+        "tool_use_id": "toolu_01P5wMpf9EkRRuGFieZgEp6e"
+      },
+      "collapse": {
+        "target": "tool_pair",
+        "label": "Skill: grill-me",
+        "default_collapsed": true
+      }
+    }
+  ],
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-09-23T15:53:41.717666511Z",
+    "agent_lines": 48,
+    "agent_removed": 98,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 48,
+    "total_lines_changed": 146,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

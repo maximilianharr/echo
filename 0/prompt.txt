@@ -1,0 +1,2 @@
+Keep the REQUIREMENTS.md to the bare (technical) minimum needed to implement it successfully. e.g. "A single-purpose Android app to lower the friction of keeping a personal/work
+diary, so it actually gets used daily." does not add any new information on how to implement it. Deviate from this requirement only if you really think this will help the implementation success or yield better results.

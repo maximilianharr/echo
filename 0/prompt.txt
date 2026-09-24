@@ -1,0 +1,5 @@
+Works great. Would it easily be possible to compress as .opus file before uploading? Or another compression format would also be fine. Something that is natively present and does not require third-party install
+
+---
+
+Go ahead with .opus 24 kbps, ignore .m4a in the heatmap. Repo / uploads is test repo, nothing in prod and no backwards compatability required.

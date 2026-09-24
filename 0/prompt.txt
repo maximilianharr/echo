@@ -1,0 +1,5 @@
+App works great. However, it seems to only use the smartphones mic. I want to have the app use the headset mic if available. I connected a headset and recorded but it kept the smartphones mic.
+
+---
+
+You can change the requirement. Headset will be bluetooth. Lower quality via bluetooth is ok.

@@ -1,0 +1,5 @@
+When the record button is pushed instead of the stop button show a pause button which only pauses the recording. Then if the pause button is clicked keep the discard button on the left and send button on the right but add a 'continue' button in the middle. Is this easily possible? If so, implement directly. Otherwise prompt for feedback if required.
+
+---
+
+deploy the app to the connected smartphone

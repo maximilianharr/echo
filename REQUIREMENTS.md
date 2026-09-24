@@ -59,7 +59,9 @@ Heatmap) summarizes past entries.
 - Recording continues until Stop, also while the screen is locked or the app
   is in the background (foreground service of type `microphone`). Closing the
   app (Back / swiping it away) while recording stops the recording.
-- Always the default mic source; no special handling of connected headsets.
+- If a Bluetooth headset is connected, record from its mic (routed via SCO
+  with `AudioManager.setCommunicationDevice`, cleared on Stop); otherwise the
+  default mic. Bluetooth audio is narrowband (8–16 kHz), which is accepted.
 
 ## Transcription
 

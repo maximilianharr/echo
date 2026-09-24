@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.AudioDeviceInfo
+import android.media.AudioManager
 import android.media.MediaRecorder
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -109,6 +111,7 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
 
     private val rec = File(app.filesDir, "rec.m4a")
     private var recorder: MediaRecorder? = null
+    private val audio = app.getSystemService(AudioManager::class.java)
     private var meter: Job? = null
     private var stamp = ""
 
@@ -159,6 +162,9 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
     fun record() {
         stamp = SimpleDateFormat("yyyyMMddHHmmss", Locale.US).format(Date())
         app.startForegroundService(Intent(app, RecordService::class.java))
+        // Bluetooth headset mics are only reachable via SCO (call audio path).
+        audio.availableCommunicationDevices.firstOrNull { it.type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO }
+            ?.let { audio.setCommunicationDevice(it) }
         recorder = MediaRecorder(app).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -193,6 +199,7 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
         }
         recorder!!.release()
         recorder = null
+        audio.clearCommunicationDevice()
         app.stopService(Intent(app, RecordService::class.java))
     }
 

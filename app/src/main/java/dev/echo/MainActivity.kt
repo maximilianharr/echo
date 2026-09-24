@@ -95,7 +95,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.log10
 
-enum class State { Idle, Recording, Stopped, Sending }
+enum class State { Idle, Recording, Paused, Sending }
 
 class Echo(private val app: Application) : AndroidViewModel(app) {
     val prefs = prefs(app)
@@ -177,6 +177,10 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
             start()
         }
         state = State.Recording
+        startMeter()
+    }
+
+    private fun startMeter() {
         meter = viewModelScope.launch {
             while (true) {
                 val amp = recorder!!.maxAmplitude
@@ -187,20 +191,35 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
         }
     }
 
-    fun stop() {
+    fun pause() {
+        recorder!!.pause()
         meter?.cancel()
         level = 0f
-        state = try {
+        state = State.Paused
+    }
+
+    fun resume() {
+        recorder!!.resume()
+        state = State.Recording
+        startMeter()
+    }
+
+    /** Finalizes the recording; false if no audio was captured. */
+    private fun stop(): Boolean {
+        meter?.cancel()
+        level = 0f
+        val ok = try {
             recorder!!.stop()
-            State.Stopped
+            true
         } catch (_: RuntimeException) { // stopped before any audio was captured
             rec.delete()
-            State.Idle
+            false
         }
         recorder!!.release()
         recorder = null
         audio.clearCommunicationDevice()
         app.stopService(Intent(app, RecordService::class.java))
+        return ok
     }
 
     override fun onCleared() {
@@ -208,11 +227,16 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
     }
 
     fun discard() {
+        stop()
         rec.delete()
         state = State.Idle
     }
 
     fun send() = viewModelScope.launch {
+        if (!stop()) {
+            state = State.Idle
+            return@launch
+        }
         state = State.Sending
         val text = transcribe(app, rec, prefs.getString("locale", "de-DE")!!)
         File(outbox(app), "journals/audio").mkdirs()
@@ -388,11 +412,14 @@ fun Record(vm: Echo) {
                     if (ctx.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) vm.record()
                     else permission.launch(Manifest.permission.RECORD_AUDIO)
                 }) { Box(Modifier.size(32.dp).background(onPrimary, CircleShape)) }
-                State.Recording -> RoundButton("Stop", 96.dp, { vm.stop() }, level) {
-                    Box(Modifier.size(28.dp).background(onPrimary, RoundedCornerShape(6.dp)))
+                State.Recording -> RoundButton("Pause", 96.dp, { vm.pause() }, level) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        repeat(2) { Box(Modifier.size(10.dp, 28.dp).background(onPrimary, RoundedCornerShape(3.dp))) }
+                    }
                 }
-                State.Stopped -> Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
+                State.Paused -> Row(horizontalArrangement = Arrangement.spacedBy(32.dp), verticalAlignment = Alignment.CenterVertically) {
                     RoundButton("Discard", 72.dp, { vm.discard() }) { Icon(Icons.Filled.Close, null) }
+                    RoundButton("Continue", 96.dp, { vm.resume() }) { Box(Modifier.size(32.dp).background(onPrimary, CircleShape)) }
                     RoundButton("Send", 72.dp, { vm.send() }) { Icon(Icons.AutoMirrored.Filled.Send, null) }
                 }
                 State.Sending -> {

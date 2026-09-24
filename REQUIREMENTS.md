@@ -18,7 +18,7 @@
 
 - Text files: `journals/YYYYMMDDHHMMSS.md` (14-digit timestamp, no
   separators), hardcoded path.
-- Audio files: `journals/audio/YYYYMMDDHHMMSS.m4a`, hardcoded path.
+- Audio files: `journals/audio/YYYYMMDDHHMMSS.opus`, hardcoded path.
 - No frontmatter.
 
 ## Setup (mandatory, gated)
@@ -53,8 +53,8 @@ Heatmap) summarizes past entries.
 
 ## Audio Recording
 
-- `MediaRecorder`, AAC codec, `.m4a` container.
-- Mono, ~96 kbps, 44.1 kHz.
+- `MediaRecorder`, Opus codec, Ogg container (`.opus`).
+- Mono, 24 kbps, 48 kHz.
 - No max recording length.
 - Recording continues until Stop, also while the screen is locked or the app
   is in the background (foreground service of type `microphone`). Closing the
@@ -69,7 +69,7 @@ Heatmap) summarizes past entries.
 - Default locale `de-DE`, switchable to `en-US` in Setup/Settings. No
   auto-detection.
 - Runs after Stop, triggered by Send.
-- The recorded `.m4a` is decoded to 16 kHz mono PCM and fed to the
+- The recorded `.opus` is decoded to 16 kHz mono PCM and fed to the
   on-device recognizer (`EXTRA_AUDIO_SOURCE`, segmented session), with
   punctuation/capitalization formatting enabled.
 - If transcription fails or yields no text, only the audio is uploaded (no
@@ -85,14 +85,14 @@ For timestamp `T` = `YYYYMMDDHHMMSS` (local time when Record was tapped):
 
   <transcribed text>
   ```
-- Audio: `journals/audio/T.m4a`
+- Audio: `journals/audio/T.opus`
 
 ## GitHub Push
 
 - GitHub REST Contents API: `PUT /repos/<configured owner/repo>/contents/<path>`.
 - No git clone / JGit — app only ever adds new files, never edits existing
   ones.
-- Two separate API calls/commits per entry (`.md`, then `.m4a`) so each can
+- Two separate API calls/commits per entry (`.md`, then `.opus`) so each can
   retry independently. Commit message: `Add <path>`, default branch.
 - HTTP 422 (file already exists, e.g. an earlier push succeeded but its
   response was lost) counts as success.
@@ -118,7 +118,7 @@ For timestamp `T` = `YYYYMMDDHHMMSS` (local time when Record was tapped):
 - Days are kept locally (set of `YYYYMMDD`).
 - Rebuilt from GitHub after a successful Setup save when the repo is new or
   changed, and by the **Sync** button in Settings. Rebuild = days of all
-  `journals/audio/*.m4a` in the repo (via
+  `journals/audio/*.opus` in the repo (via
   `GET /repos/<owner/repo>/git/trees/HEAD:journals/audio`; the Contents API
   is capped at 1000 entries) plus entries still waiting in the local queue.
   Missing directory or empty repo = no days.

@@ -109,7 +109,7 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
     var syncing by mutableStateOf(false)
     var level by mutableFloatStateOf(0f) // recording loudness, 0..1
 
-    private val rec = File(app.filesDir, "rec.m4a")
+    private val rec = File(app.filesDir, "rec.opus")
     private var recorder: MediaRecorder? = null
     private val audio = app.getSystemService(AudioManager::class.java)
     private var meter: Job? = null
@@ -167,11 +167,11 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
             ?.let { audio.setCommunicationDevice(it) }
         recorder = MediaRecorder(app).apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setOutputFormat(MediaRecorder.OutputFormat.OGG)
+            setAudioEncoder(MediaRecorder.AudioEncoder.OPUS)
             setAudioChannels(1)
-            setAudioEncodingBitRate(96_000)
-            setAudioSamplingRate(44_100)
+            setAudioEncodingBitRate(24_000)
+            setAudioSamplingRate(48_000)
             setOutputFile(rec)
             prepare()
             start()
@@ -216,13 +216,13 @@ class Echo(private val app: Application) : AndroidViewModel(app) {
         state = State.Sending
         val text = transcribe(app, rec, prefs.getString("locale", "de-DE")!!)
         File(outbox(app), "journals/audio").mkdirs()
-        rec.renameTo(File(outbox(app), "journals/audio/$stamp.m4a"))
+        rec.renameTo(File(outbox(app), "journals/audio/$stamp.opus"))
         if (text != null) {
             File(outbox(app), "journals/$stamp.md")
                 .writeText("# ${stamp.substring(0, 4)} ${stamp.substring(4, 6)} ${stamp.substring(6, 8)}\n\n$text\n")
             SyncWorker.enqueue(app, "journals/$stamp.md")
         }
-        SyncWorker.enqueue(app, "journals/audio/$stamp.m4a")
+        SyncWorker.enqueue(app, "journals/audio/$stamp.opus")
         storeDays(days + stamp.take(8))
         state = State.Idle
     }

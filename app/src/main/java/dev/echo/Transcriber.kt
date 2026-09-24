@@ -27,15 +27,15 @@ import kotlin.math.floor
 private const val RATE = 16000
 
 /**
- * Transcribes [m4a] with the on-device recognizer by streaming it as 16 kHz mono PCM.
+ * Transcribes [audio] with the on-device recognizer by streaming it as 16 kHz mono PCM.
  * Returns null if nothing was recognized or recognition failed.
  */
-suspend fun transcribe(ctx: Context, m4a: File, locale: String): String? = coroutineScope {
+suspend fun transcribe(ctx: Context, audio: File, locale: String): String? = coroutineScope {
     if (!SpeechRecognizer.isOnDeviceRecognitionAvailable(ctx)) return@coroutineScope null
     val (read, write) = ParcelFileDescriptor.createPipe()
     launch(Dispatchers.IO) {
         try {
-            ParcelFileDescriptor.AutoCloseOutputStream(write).use { decode(m4a, it) }
+            ParcelFileDescriptor.AutoCloseOutputStream(write).use { decode(audio, it) }
         } catch (_: IOException) {
             // recognizer stopped reading
         }
@@ -95,9 +95,9 @@ private suspend fun recognize(ctx: Context, audio: ParcelFileDescriptor, locale:
         }
     }
 
-/** Decodes [m4a] and writes it to [out] as 16-bit little-endian mono PCM at [RATE] Hz (linear resampling). */
-private fun decode(m4a: File, out: OutputStream) {
-    val ex = MediaExtractor().apply { setDataSource(m4a.path); selectTrack(0) }
+/** Decodes [audio] and writes it to [out] as 16-bit little-endian mono PCM at [RATE] Hz (linear resampling). */
+private fun decode(audio: File, out: OutputStream) {
+    val ex = MediaExtractor().apply { setDataSource(audio.path); selectTrack(0) }
     val fmt = ex.getTrackFormat(0)
     val ch = fmt.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
     val step = fmt.getInteger(MediaFormat.KEY_SAMPLE_RATE).toDouble() / RATE

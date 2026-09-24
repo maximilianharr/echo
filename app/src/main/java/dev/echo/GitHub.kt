@@ -36,7 +36,7 @@ fun listDays(repo: String, pat: String): Set<String> {
     }
     val tree = JSONObject(conn.inputStream.bufferedReader().readText()).getJSONArray("tree")
     return (0 until tree.length()).map { tree.getJSONObject(it).getString("path") }
-        .filter { Regex("\\d{14}\\.m4a").matches(it) }
+        .filter { Regex("\\d{14}\\.opus").matches(it) }
         .map { it.take(8) }.toSet()
 }
 
